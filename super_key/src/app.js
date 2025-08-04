@@ -11,6 +11,12 @@ const app = express();
 // Security headers
 app.use(helmet());
 
+// ✅ CORS setup for separate deployment
+app.use(cors({
+  origin: process.env.FRONTEND_URL, // <-- your frontend domain
+  credentials: true, // Required to send cookies across origins
+}));
+
 // Request logger
 app.use((req, res, next) => {
   console.log(`App: Request received: ${req.method} ${req.url}`);
@@ -31,11 +37,6 @@ store.on('error', (error) => {
 store.on('connected', () => console.log('MongoDB Session Store Connected!'));
 store.on('disconnected', () => console.warn('MongoDB Session Store Disconnected!'));
 
-// ✅ CORS setup for separate deployment
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // <-- your frontend domain
-  credentials: true, // Required to send cookies across origins
-}));
 
 // ✅ Session setup with cross-origin cookies
 app.use(session({
