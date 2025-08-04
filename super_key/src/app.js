@@ -1,44 +1,43 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
 const app = express();
 
-// Middleware
+// Security headers
 app.use(helmet());
+
+// Request logger
 app.use((req, res, next) => {
   console.log(`App: Request received: ${req.method} ${req.url}`);
   next();
 });
+
 app.use(cookieParser());
+
+// MongoDB session store
 const store = new MongoDBStore({
   uri: process.env.MONGODB_URI,
   collection: 'sessions'
 });
 
-// Catch errors
-store.on('error', function(error) {
+store.on('error', (error) => {
   console.error('MongoDB Session Store Error:', error);
 });
+store.on('connected', () => console.log('MongoDB Session Store Connected!'));
+store.on('disconnected', () => console.warn('MongoDB Session Store Disconnected!'));
 
-store.on('connected', function() {
-  console.log('MongoDB Session Store Connected!');
-
-});
-
-store.on('disconnected', function() {
-  console.warn('MongoDB Session Store Disconnected!');
-});
-
+// ✅ CORS setup for separate deployment
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // <-- your frontend domain
+  credentials: true, // Required to send cookies across origins
 }));
 
+// ✅ Session setup with cross-origin cookies
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -46,17 +45,15 @@ app.use(session({
   store: store,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-    secure: false, // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === 'production', // Set to true on HTTPS
     httpOnly: true,
-    sameSite: 'None', // Required for cross-site cookies
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax' // Allow cross-site in prod
   }
 }));
 
-
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 
 // Routes
 app.use('/api/auth', require('./routes/auth').router);
@@ -64,21 +61,22 @@ app.use('/api/users', require('./routes/users').router);
 app.use('/api/endusers', require('./routes/endUsers').router);
 app.use('/api/keys', require('./routes/keys').router);
 app.use('/api/emi', require('./routes/emi').router);
-app.use('/api/support/', require('./routes/support').router);
+app.use('/api/support', require('./routes/support').router);
 app.use('/setup', require('./routes/setup').router);
 
-// Error handling middleware
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-console.log('Attempting to start server...');
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+// Global error handlers
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION! Shutting down...');
   console.error(err);
