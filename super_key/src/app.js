@@ -13,7 +13,7 @@ app.use(helmet());
 
 // ✅ CORS setup for separate deployment
 app.use(cors({
-  origin: '*', // <-- your frontend domain
+  origin: process.env.FRONTEND_URL, // <-- your frontend domain
   credentials: true, // Required to send cookies across origins
 }));
 
@@ -27,7 +27,7 @@ app.use(cookieParser());
 console.log('process.env.MONGODB_URI:', process.env.MONGODB_URI);
 // MongoDB session store
 const store = new MongoDBStore({
-  uri: process.env.MONGODB_URI,
+  uri: "mongodb+srv://harsh:Asdf@1234@cluster0.hsnb1na.mongodb.net/super_key_sessions?retryWrites=true&w=majority&appName=Cluster0",
   collection: 'sessions'
 });
 
