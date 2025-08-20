@@ -30,11 +30,11 @@ console.log('process.env.MONGODB_URI:', process.env.MONGODB_URI);
 //   uri: 'mongodb+srv://harsh:Asdf%401234@cluster0.hsnb1na.mongodb.net/super_key_sessions?retryWrites=true&w=majority&appName=Cluster0',
 //   collection: 'sessions'
 // });
-app.use(session({
-  secret: 'test',
-  resave: false,
-  saveUninitialized: true,
-}));
+// app.use(session({
+//   secret: 'test',
+//   resave: false,
+//   saveUninitialized: true,
+// }));
 // store.on('error', (error) => {
 //   console.error('MongoDB Session Store Error:', error);
 // });
@@ -47,7 +47,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: store,
+  // store: store,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     secure: process.env.NODE_ENV === 'production', // Set to true on HTTPS
