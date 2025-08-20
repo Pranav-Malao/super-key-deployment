@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         // Fetch user data from your backend using the idToken
         try {
           console.log('AuthContext: Attempting to fetch user data after Firebase auth state change...');
-          const response = await fetch('http://localhost:3000/api/users/me', {
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
             headers: {
               'Authorization': `Bearer ${idToken}`
             }
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
 
       // Send ID token to backend for session establishment and custom token generation (if applicable)
       // Send ID token to backend for session establishment
-      const sessionLoginResponse = await fetch('http://localhost:3000/api/auth/sessionLogin', {
+      const sessionLoginResponse = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/auth/sessionLogin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // After successful session establishment, fetch user data
-      const userResponse = await fetch('http://localhost:3000/api/users/me', {
+      const userResponse = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
         headers: {
           'Authorization': `Bearer ${idToken}`
         }

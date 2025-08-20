@@ -13,7 +13,7 @@ app.use(helmet());
 
 // ✅ CORS setup for separate deployment
 app.use(cors({
-  origin: process.env.FRONTEND_URL, // <-- your frontend domain
+  origin: '*', // <-- your frontend domain
   credentials: true, // Required to send cookies across origins
 }));
 
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cookieParser());
-
+console.log('process.env.MONGODB_URI:', process.env.MONGODB_URI);
 // MongoDB session store
 const store = new MongoDBStore({
   uri: process.env.MONGODB_URI,

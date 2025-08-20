@@ -32,7 +32,7 @@ const RegisterPage = () => {
       console.log("idToken", idToken);
 
       // Send data to backend
-      const response = await fetch("http://localhost:3000/api/auth/register", {
+      const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

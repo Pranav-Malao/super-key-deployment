@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
 const Wallet = () => {
@@ -15,7 +15,7 @@ const Wallet = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:3000/api/users/wallet', {
+        const response = await fetch(`http://${import.meta.env.VITE_BACKEND_URL}/api/users/wallet`, {
           headers: {
             'Authorization': `Bearer ${authToken}`,
           },
