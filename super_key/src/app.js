@@ -3,7 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const MongoDBStore = require('connect-mongodb-session')(session);
+// const MongoDBStore = require('connect-mongodb-session')(session);
 require('dotenv').config();
 
 const app = express();
@@ -35,11 +35,11 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
 }));
-store.on('error', (error) => {
-  console.error('MongoDB Session Store Error:', error);
-});
-store.on('connected', () => console.log('MongoDB Session Store Connected!'));
-store.on('disconnected', () => console.warn('MongoDB Session Store Disconnected!'));
+// store.on('error', (error) => {
+//   console.error('MongoDB Session Store Error:', error);
+// });
+// store.on('connected', () => console.log('MongoDB Session Store Connected!'));
+// store.on('disconnected', () => console.warn('MongoDB Session Store Disconnected!'));
 
 
 // ✅ Session setup with cross-origin cookies
